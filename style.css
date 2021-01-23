@@ -1,0 +1,17 @@
+.clock {
+  color: rgb(83, 112, 116);
+  font-size: 50px;
+}
+
+.btn {
+  cursor: pointer;
+}
+
+.js-name-form,
+.js-name-text {
+  display: none;
+}
+
+.showing {
+  display: block;
+}
