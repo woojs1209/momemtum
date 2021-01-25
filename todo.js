@@ -1,36 +1,72 @@
-const toDoContainer = document.querySelector(".js-todo-form"),
-toDoBox = toDoContainer.querySelector("input"),
-toDoList = document.querySelector(".js-todo-list");
+const doContainer = document.querySelector(".js-todo-form"),
+    doInput = doContainer.querySelector("input"),
+    doList = document.querySelector(".js-todo-list");
 
 
-const TODO_LIST = "todos"
+const TODOS = "todos";
+let TODO_LIST = [];
 
+function deleteBtn(event) {
+    const btn = event.target;
+    const delLt = btn.parentNode;
+    doList.removeChild(delLt);
+    const cleanList = TODO_LIST.filter(function(toDos) {
+        return toDos.id !== parseInt(delLt.id);
+    });
+    TODO_LIST = cleanList;
+    saveList();
+}
 
-function makeList(text) {
-    const li = document.createElement("li");
-    const delBtn = document.createElement("button");
+function saveList() {
+    localStorage.setItem(TODOS, JSON.stringify(TODO_LIST));
+}
+
+function printList(text) {
+    const li = document.createElement("li"),
+    delBtn = document.createElement("button"),
+    span = document.createElement("span"),
+    newId = TODO_LIST.length + 1;
+    
     delBtn.innerHTML = "X";
-    const span = document.createElement("span");
     span.innerText = text;
-    li.appendChild(span);
+
     li.appendChild(delBtn);
-    toDoList.appendChild(li);
+    delBtn.addEventListener("click", deleteBtn);
+    li.appendChild(span);
+    li.id = newId;
+    doList.appendChild(li);
+    
+
+    const doObj = {
+        text,
+        id : newId
+    }
+    TODO_LIST.push(doObj);
+    saveList();
 }
 
 function handleSubmit(event) {
-    event.preventDefault();
-    const toDoValue = toDoBox.value;
-    makeList(toDoValue);
-    toDoBox.value = "";
+    event.preventDefault()
+    const currentValue = doInput.value;
+    printList(currentValue);
+    doInput.value = "";
 }
+
 
 function loadToDo() {
-    localStorage.setItem(TODO_LIST, );
+    const TODOS_KEY = localStorage.getItem(TODOS);
+    if(TODOS_KEY !== null) {
+        const parsedToDos = JSON.parse(TODOS_KEY);
+        parsedToDos.forEach(function(todo) {
+            printList(todo.text);
+        })
+    }
 }
 
-function init() {
+
+function init(){
     loadToDo();
-    toDoContainer.addEventListener("submit", handleSubmit);
+    doContainer.addEventListener("submit", handleSubmit);
 }
 
 init();
